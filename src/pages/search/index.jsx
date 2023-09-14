@@ -46,7 +46,7 @@ export default function Search() {
           return
         }
       setFetching(true)
-      const res = await fetch('https://www.googleapis.com/books/v1/volumes?langRestrict=en&readability=full&maxResults=16&q=' + query)
+      const res = await fetch('https://www.googleapis.com/books/v1/volumes?langRestrict=en&&maxResults=16&q=' + query)
       const items = await res.json({title, authors, thumbnail, previewLink})
       setBookSearchResults(items)
       setFetching(false)
