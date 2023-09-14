@@ -17,14 +17,11 @@ export default function Search() {
   // Use a query of "React"
 
   useEffect(() => {
-    let controller = new AbortController()
     setFetching(true)
     async function getBooks() {
       try {
-      const res = await fetch('https://www.googleapis.com/books/v1/volumes?langRestrict=en&maxResults=16&q=React', {
-        signal: controller.signal
-      })
-      const items = await res.json()
+      const res = await fetch('https://www.googleapis.com/books/v1/volumes?langRestrict=en&maxResults=16&q=React')
+      const items = await res.json({title, authors, thumbnail, previewLink})
       setBookSearchResults(items)
       setFetching(false)
       setPreviousQuery(query)
@@ -33,9 +30,7 @@ export default function Search() {
     }
   }
   getBooks()
-  return() => {
-    controller.abort()
-  }}, [])
+}, [])
 
   // TODO: Write a submit handler for the form that fetches data from:
   // https://www.googleapis.com/books/v1/volumes?langRestrict=en&maxResults=16&q=YOUR_QUERY
@@ -44,21 +39,15 @@ export default function Search() {
   // fetch has not finished
   // the query is unchanged
 
-  useEffect(() => {
-    if(fetching = true){
-      return
-    }
-    if (previousQuery = query) {
-      return
-    }
-    let controller = new AbortController()
-    setFetching(true)
+
     async function getBooks() {
       try {
-      const res = await fetch('https://www.googleapis.com/books/v1/volumes?langRestrict=en&maxResults=16&q=' + query, {
-        signal: controller.signal
-      })
-      const items = await res.json()
+        if(fetching = true || previousQuery == query){
+          return
+        }
+      setFetching(true)
+      const res = await fetch('https://www.googleapis.com/books/v1/volumes?langRestrict=en&readability=full&maxResults=16&q=' + query)
+      const items = await res.json({title, authors, thumbnail, previewLink})
       setBookSearchResults(items)
       setFetching(false)
       setPreviousQuery(query)
@@ -66,10 +55,6 @@ export default function Search() {
       console.log('aborted')
     }
   }
-  getBooks()
-  return() => {
-    controller.abort()
-  }}, [SubmitEvent])
 
   const inputRef = useRef()
   const inputDivRef = useRef()
@@ -78,7 +63,7 @@ export default function Search() {
     <main className={styles.search}>
       <h1>Book Search</h1>
       {/* TODO: add an onSubmit handler */}
-      <form className={styles.form} onSubmit={Search()}>
+      <form className={styles.form} onSubmit={getBooks()}>
         <label htmlFor="book-search">Search by author, title, and/or keywords:</label>
         <div ref={inputDivRef}>
           {/* TODO: add value and onChange props to the input element based on query/setQuery */}
@@ -102,6 +87,12 @@ export default function Search() {
         : bookSearchResults?.length
         ? <div className={styles.bookList}>
             {/* TODO: render BookPreview components for each search result here based on bookSearchResults */}
+              {bookSearchResults.map(({title, authors, thumbnail, previewLink}) => <BookPreview 
+              title={title}
+              authors={authors}
+              thumbnail={thumbnail}
+              previewLink={previewLink}
+              />)}
           </div>
         : <NoResults
           {...{inputRef, inputDivRef, previousQuery}}
