@@ -64,9 +64,10 @@ export default function Search() {
     <main className={styles.search}>
       <h1>Book Search</h1>
       {/* TODO: add an onSubmit handler */}
-      <form className={styles.form} onSubmit={async () => {
+      <form className={styles.form} onSubmit={async (e) => {
+        e.preventDefault()
         try {
-          if(fetching == true || previousQuery == query){
+          if(fetching == true || previousQuery == query || query == ""){
             return
           }
         setFetching(true)
@@ -88,7 +89,10 @@ export default function Search() {
             type="text"
             name="book-search"
             id="book-search"
-            onChange={() => setQuery(this.value)}
+            value={query}
+            onChange={(event) => {setQuery(event.target.value)
+            console.log(query)
+            }}
             />
           <button type="submit">Submit</button>
         </div>
@@ -105,7 +109,7 @@ export default function Search() {
               {bookSearchResults.map(item => <div key={item.id}><BookPreview
               title={item.volumeInfo.title}
               authors={item.volumeInfo.authors}
-              thumbnail={item.volumeInfo.imageLinks.thumbnail}
+              thumbnail={item.volumeInfo.imageLinks?.thumbnail}
               previewLink={item.volumeInfo.previewLink}
               />
               </div>)}
