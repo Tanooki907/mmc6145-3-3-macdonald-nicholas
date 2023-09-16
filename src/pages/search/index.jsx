@@ -25,7 +25,7 @@ export default function Search() {
       setBookSearchResults(items.items)
       setFetching(false)
       setPreviousQuery(query)
-      console.log(bookSearchResults)
+      console.log(items.items)
     } catch {
       console.log('aborted')
     }
@@ -52,7 +52,6 @@ export default function Search() {
       setBookSearchResults(items.items)
       setFetching(false)
       setPreviousQuery(query)
-      console.log(bookSearchResults)
     } catch {
       console.log('aborted')
     }
@@ -103,13 +102,13 @@ export default function Search() {
         : bookSearchResults?.length
         ? <div className={styles.bookList}>
             {/* TODO: render BookPreview components for each search result here based on bookSearchResults */}
-              {bookSearchResults.map(({title, authors, thumbnail, previewLink}) => <BookPreview
-              key={title} 
-              title={title}
-              authors={authors}
-              thumbnail={thumbnail}
-              previewLink={previewLink}
-              />)}
+              {bookSearchResults.map(item => <div key={item.id}><BookPreview
+              title={item.volumeInfo.title}
+              authors={item.volumeInfo.authors}
+              thumbnail={item.volumeInfo.imageLinks.thumbnail}
+              previewLink={item.volumeInfo.previewLink}
+              />
+              </div>)}
           </div>
         : <NoResults
           {...{inputRef, inputDivRef, previousQuery}}
