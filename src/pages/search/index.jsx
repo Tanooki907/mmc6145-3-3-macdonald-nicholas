@@ -21,10 +21,11 @@ export default function Search() {
     async function getBooks() {
       try {
       const res = await fetch('https://www.googleapis.com/books/v1/volumes?langRestrict=en&maxResults=16&q=React')
-      const items = await res.json({title, authors, thumbnail, previewLink})
-      setBookSearchResults(items)
+      const items = await res.json()
+      setBookSearchResults(items.items)
       setFetching(false)
       setPreviousQuery(query)
+      console.log(bookSearchResults)
     } catch {
       console.log('aborted')
     }
@@ -42,15 +43,16 @@ export default function Search() {
 
     async function getBooks() {
       try {
-        if(fetching = true || previousQuery == query){
+        if(fetching == true || previousQuery == query){
           return
         }
       setFetching(true)
       const res = await fetch('https://www.googleapis.com/books/v1/volumes?langRestrict=en&maxResults=16&q=' + query)
-      const items = await res.json({title, authors, thumbnail, previewLink})
-      setBookSearchResults(items)
+      const items = await res.json()
+      setBookSearchResults(items.items)
       setFetching(false)
       setPreviousQuery(query)
+      console.log(bookSearchResults)
     } catch {
       console.log('aborted')
     }
@@ -72,10 +74,9 @@ export default function Search() {
             type="text"
             name="book-search"
             id="book-search"
-            value={query}
             onChange={() => setQuery(value)}
             />
-          <button type="submit">Submit</button>
+          <button type="submit" onClick={getBooks()}>Submit</button>
         </div>
       </form>
       {
